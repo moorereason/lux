@@ -3,8 +3,6 @@ package lux
 import (
 	"fmt"
 	"testing"
-
-	"github.com/fatih/color"
 )
 
 func TestColor(t *testing.T) {
@@ -136,13 +134,5 @@ func BenchmarkNoColor(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		_ = fmt.Sprintf("%s", Blue("test"))
-	}
-}
-
-func BenchmarkFatih(b *testing.B) {
-	color.NoColor = false
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		_ = color.BlueString("test")
 	}
 }
