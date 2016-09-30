@@ -1,19 +1,25 @@
 package lux
 
-import "fmt"
+import (
+	"fmt"
 
-func (x *Lux) write(f fmt.State) {
-	f.Write(escape)
-	f.Write([]byte{0x5b}) // "["
+	"github.com/mattn/go-colorable"
+)
 
-	for i := 0; i < len(x.styles); i++ {
-		f.Write(attrs[x.styles[i]])
-		if i < len(x.styles)-1 {
-			f.Write([]byte{0x3b}) // ";"
-		}
-	}
+// Output is the io.Writer used by Print, Printf, and Println.
+var Output = colorable.NewColorableStdout()
 
-	f.Write([]byte{0x6d}) // "m"
-	f.Write([]byte(x.val))
-	f.Write([]byte{0x1b, 0x5b, 0x30, 0x6d}) // "\033[0m"
+// Print is a colorable frontend to fmt.Print.
+func Print(a ...interface{}) (n int, err error) {
+	return fmt.Fprint(Output, a...)
+}
+
+// Printf is a colorable frontend to fmt.Printf.
+func Printf(format string, a ...interface{}) (n int, err error) {
+	return fmt.Fprintf(Output, format, a...)
+}
+
+// Println is a colorable frontend to fmt.Println.
+func Println(a ...interface{}) (n int, err error) {
+	return fmt.Fprintln(Output, a...)
 }

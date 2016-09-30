@@ -10,7 +10,7 @@ func TestColor(t *testing.T) {
 
 	tests := []struct {
 		text   string
-		fn     luxFn
+		fn     LuxFn
 		styles string
 	}{
 		{"bold", Bold, "1"},
@@ -66,7 +66,7 @@ func TestColor(t *testing.T) {
 		want := fmt.Sprintf("%s[%sm%s%s[0m", escape, test.styles, test.text, escape)
 		wantq := fmt.Sprintf("%q", want)
 
-		fmt.Printf("%s\n", s) // visuals in verbose or error mode
+		// fmt.Printf("%s\n", s) // visuals in verbose or error mode
 		if q != wantq {
 			t.Errorf("Given: %q\nwant: %q\ngot: %q", test.text, wantq, q)
 		}
@@ -78,25 +78,25 @@ func TestMulti(t *testing.T) {
 
 	tests := []struct {
 		text   string
-		fns    []luxFn
+		fns    []LuxFn
 		styles string
 	}{
-		{"BlackOnBgGreen", []luxFn{BgGreen, Black}, "42;30"},
-		{"BgGreenUnderBlack", []luxFn{Black, BgGreen}, "30;42"},
-		{"RedGreen", []luxFn{Green, Red}, "32;31"},
+		{"BlackOnBgGreen", []LuxFn{BgGreen, Black}, "42;30"},
+		{"BgGreenUnderBlack", []LuxFn{Black, BgGreen}, "30;42"},
+		{"RedGreen", []LuxFn{Green, Red}, "32;31"},
 
-		{"Red", []luxFn{Red}, "31"},
-		{"RedBold", []luxFn{Red, Bold}, "31;1"},
-		{"HiRedBold", []luxFn{HiRed, Bold}, "91;1"},
+		{"Red", []LuxFn{Red}, "31"},
+		{"RedBold", []LuxFn{Red, Bold}, "31;1"},
+		{"HiRedBold", []LuxFn{HiRed, Bold}, "91;1"},
 
-		{"GreenFaint", []luxFn{Green, Faint}, "32;2"},
-		{"YellowItalic", []luxFn{Yellow, Italic}, "33;3"},
-		{"BlueUnderline", []luxFn{Blue, Underline}, "34;4"},
-		{"MagentaBlinkSlow", []luxFn{Magenta, BlinkSlow}, "35;5"},
-		{"CyanBlinkRapid", []luxFn{Cyan, BlinkRapid}, "36;6"},
-		{"WhiteReverseVideo", []luxFn{White, ReverseVideo}, "37;7"},
-		{"WhiteConcealed", []luxFn{White, Concealed}, "37;8"},
-		{"WhiteCrossedOut", []luxFn{White, CrossedOut}, "37;9"},
+		{"GreenFaint", []LuxFn{Green, Faint}, "32;2"},
+		{"YellowItalic", []LuxFn{Yellow, Italic}, "33;3"},
+		{"BlueUnderline", []LuxFn{Blue, Underline}, "34;4"},
+		{"MagentaBlinkSlow", []LuxFn{Magenta, BlinkSlow}, "35;5"},
+		{"CyanBlinkRapid", []LuxFn{Cyan, BlinkRapid}, "36;6"},
+		{"WhiteReverseVideo", []LuxFn{White, ReverseVideo}, "37;7"},
+		{"WhiteConcealed", []LuxFn{White, Concealed}, "37;8"},
+		{"WhiteCrossedOut", []LuxFn{White, CrossedOut}, "37;9"},
 	}
 
 	for _, test := range tests {
@@ -114,7 +114,7 @@ func TestMulti(t *testing.T) {
 		want := fmt.Sprintf("%s[%sm%s%s[0m", escape, test.styles, test.text, escape)
 		wantq := fmt.Sprintf("%q", want)
 
-		fmt.Printf("%s\n", v) // visuals in verbose or error mode
+		// fmt.Printf("%s\n", v) // visuals in verbose or error mode
 		if q != wantq {
 			t.Errorf("Given: %q\nwant: %q\ngot: %q", test.text, wantq, q)
 		}

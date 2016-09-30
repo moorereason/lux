@@ -1,6 +1,7 @@
 package lux
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 
@@ -21,10 +22,61 @@ type Lux struct {
 	styles []int
 }
 
-// make sure we implement fmt.Formatter interface
-var _ fmt.Formatter = (*Lux)(nil)
+// New creates a new Lux instances with a series of LuxFn styles.
+func New(fns ...LuxFn) *Lux {
+	x := &Lux{}
+	for _, fn := range fns {
+		x = fn(x)
+	}
+	return x
+}
 
-// Format implements the fmt.Formatter interface.
+// Add appends a style to the list of styles in a Lux.
+func (x *Lux) Add(f LuxFn) *Lux {
+	return f(x)
+}
+
+// Print is a colorable frontend to fmt.Print.
+func (x *Lux) Print(a ...interface{}) (n int, err error) {
+	mod := make([]interface{}, len(a))
+	for i, v := range a {
+		mod[i] = &Lux{
+			val:    fmt.Sprintf("%v", v),
+			styles: x.styles,
+		}
+	}
+
+	return fmt.Fprintf(Output, "%s", mod...)
+}
+
+// Printf is a colorable frontend to fmt.Printf.
+func (x *Lux) Printf(format string, a ...interface{}) (n int, err error) {
+	mod := make([]interface{}, len(a))
+	for i, v := range a {
+		mod[i] = &Lux{
+			val:    fmt.Sprintf("%v", v),
+			styles: x.styles,
+		}
+	}
+
+	return fmt.Fprintf(Output, format, mod...)
+}
+
+// Println is a colorable frontend to fmt.Println.
+func (x *Lux) Println(a ...interface{}) (n int, err error) {
+	mod := make([]interface{}, len(a))
+	for i, v := range a {
+		mod[i] = &Lux{
+			val:    fmt.Sprintf("%v", v),
+			styles: x.styles,
+		}
+	}
+
+	return fmt.Fprintf(Output, "%s\n", mod...)
+}
+
+// Format implements the fmt.Formatter interface.  Not to be used directly.
+// Instead, pass the Lux as a parameter to fmt format functions.
 func (x *Lux) Format(f fmt.State, format rune) {
 	if NoColor {
 		f.Write([]byte(x.val))
@@ -43,7 +95,42 @@ func (x *Lux) Format(f fmt.State, format rune) {
 	x.write(f)
 }
 
-// add creates a new Lux.
+// make sure we implement fmt.Formatter interface
+var _ fmt.Formatter = (*Lux)(nil)
+
+func (x *Lux) write(f fmt.State) {
+	f.Write(x.format())
+	f.Write([]byte(x.val))
+	f.Write(x.unformat())
+}
+
+// format writes the beginning format codes.
+func (x *Lux) format() []byte {
+	var f bytes.Buffer
+
+	f.Write(escape)
+	f.Write([]byte{0x5b}) // "["
+
+	for i := 0; i < len(x.styles); i++ {
+		f.Write(attrs[x.styles[i]])
+		if i < len(x.styles)-1 {
+			f.Write([]byte{0x3b}) // ";"
+		}
+	}
+
+	f.Write([]byte{0x6d}) // "m"
+
+	return f.Bytes()
+}
+
+// unformat writes the format reset codes.
+func (x *Lux) unformat() []byte {
+	var f bytes.Buffer
+	f.Write([]byte{0x1b, 0x5b, 0x30, 0x6d}) // "\033[0m"
+	return f.Bytes()
+}
+
+// add is a helper function that creates a new Lux or extends an existing Lux.
 func add(style int, v interface{}) (res *Lux) {
 	switch t := v.(type) {
 	case *Lux:
@@ -60,52 +147,3 @@ func add(style int, v interface{}) (res *Lux) {
 	}
 	return res
 }
-
-type luxFn func(interface{}) *Lux
-
-func Reset(v interface{}) *Lux        { return add(0, v) }
-func Bold(v interface{}) *Lux         { return add(1, v) }
-func Faint(v interface{}) *Lux        { return add(2, v) }
-func Italic(v interface{}) *Lux       { return add(3, v) }
-func Underline(v interface{}) *Lux    { return add(4, v) }
-func BlinkSlow(v interface{}) *Lux    { return add(5, v) }
-func BlinkRapid(v interface{}) *Lux   { return add(6, v) }
-func ReverseVideo(v interface{}) *Lux { return add(7, v) }
-func Concealed(v interface{}) *Lux    { return add(8, v) }
-func CrossedOut(v interface{}) *Lux   { return add(9, v) }
-
-func Black(v interface{}) *Lux   { return add(30, v) }
-func Red(v interface{}) *Lux     { return add(31, v) }
-func Green(v interface{}) *Lux   { return add(32, v) }
-func Yellow(v interface{}) *Lux  { return add(33, v) }
-func Blue(v interface{}) *Lux    { return add(34, v) }
-func Magenta(v interface{}) *Lux { return add(35, v) }
-func Cyan(v interface{}) *Lux    { return add(36, v) }
-func White(v interface{}) *Lux   { return add(37, v) }
-
-func BgBlack(v interface{}) *Lux   { return add(40, v) }
-func BgRed(v interface{}) *Lux     { return add(41, v) }
-func BgGreen(v interface{}) *Lux   { return add(42, v) }
-func BgYellow(v interface{}) *Lux  { return add(43, v) }
-func BgBlue(v interface{}) *Lux    { return add(44, v) }
-func BgMagenta(v interface{}) *Lux { return add(45, v) }
-func BgCyan(v interface{}) *Lux    { return add(46, v) }
-func BgWhite(v interface{}) *Lux   { return add(47, v) }
-
-func HiBlack(v interface{}) *Lux   { return add(90, v) }
-func HiRed(v interface{}) *Lux     { return add(91, v) }
-func HiGreen(v interface{}) *Lux   { return add(92, v) }
-func HiYellow(v interface{}) *Lux  { return add(93, v) }
-func HiBlue(v interface{}) *Lux    { return add(94, v) }
-func HiMagenta(v interface{}) *Lux { return add(95, v) }
-func HiCyan(v interface{}) *Lux    { return add(96, v) }
-func HiWhite(v interface{}) *Lux   { return add(97, v) }
-
-func BgHiBlack(v interface{}) *Lux   { return add(100, v) }
-func BgHiRed(v interface{}) *Lux     { return add(101, v) }
-func BgHiGreen(v interface{}) *Lux   { return add(102, v) }
-func BgHiYellow(v interface{}) *Lux  { return add(103, v) }
-func BgHiBlue(v interface{}) *Lux    { return add(104, v) }
-func BgHiMagenta(v interface{}) *Lux { return add(105, v) }
-func BgHiCyan(v interface{}) *Lux    { return add(106, v) }
-func BgHiWhite(v interface{}) *Lux   { return add(107, v) }
