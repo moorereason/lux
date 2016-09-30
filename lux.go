@@ -25,34 +25,22 @@ type Lux struct {
 var _ fmt.Formatter = (*Lux)(nil)
 
 // Format implements the fmt.Formatter interface.
-func (s *Lux) Format(state fmt.State, format rune) {
+func (x *Lux) Format(f fmt.State, format rune) {
 	if NoColor {
-		state.Write([]byte(s.val))
+		f.Write([]byte(x.val))
 		return
 	}
 	if format == 'v' {
-		if state.Flag('+') {
-			state.Write([]byte(fmt.Sprintf("{val: %v, styles: %v}", s.val, s.styles)))
+		if f.Flag('+') {
+			f.Write([]byte(fmt.Sprintf("{val: %v, styles: %v}", x.val, x.styles)))
 
 		} else {
-			state.Write([]byte(fmt.Sprintf("{%v %v}", s.val, s.styles)))
+			f.Write([]byte(fmt.Sprintf("{%v %v}", x.val, x.styles)))
 		}
 		return
 	}
 
-	state.Write(escape)
-	state.Write([]byte{0x5b}) // "["
-
-	for i := 0; i < len(s.styles); i++ {
-		state.Write(attrs[s.styles[i]])
-		if i < len(s.styles)-1 {
-			state.Write([]byte{0x3b}) // ";"
-		}
-	}
-
-	state.Write([]byte{0x6d}) // "m"
-	state.Write([]byte(s.val))
-	state.Write([]byte{0x1b, 0x5b, 0x30, 0x6d}) // "\033[0m"
+	x.write(f)
 }
 
 // add creates a new Lux.
