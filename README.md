@@ -91,12 +91,19 @@ Two things make Windows support difficult:
 
 Because of these limitations, creating cross-platform console colors requires
 writing wrappers around `fmt.Fprintf` to write to an `io.Writer` provided by
-the [colorable](https://github.com/mattn/go-colorable) package.
+the [colorable][colorable] package.
 
 ## Acknowledgments
 
-- [@mattn](https://github.com/mattn) for the [colorable](https://github.com/mattn/go-colorable) package.
-- [@fatih](https://github.com/fatih) for the [color](https://github.com/fatih/color) package,
+- [@mattn][mattn] for the [colorable][go-colorable] package.
+- [@fatih][faith] for the [color] package,
   which is a more widely used package and accomplishes many of the same goals as `lux`.
   The main difference is that `lux` is a `fmt.Formatter` implementation.
-    - Bonus shoutout to @fatih for the awesome [https://github.com/fatih/vim-go](vim-go) package.
+    - Bonus shoutout to [@fatih][fatih] for the awesome [vim-go][vim-go] package.
+
+
+[fatih]:  https://github.com/fatih
+[color]:  https://github.com/fatih/color
+[vim-go]: https://github.com/fatih/vim-go
+[mattn]:  https://github.com/mattn
+[colorable]: https://github.com/mattn/go-colorable
