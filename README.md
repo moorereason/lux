@@ -87,7 +87,7 @@ Two things make Windows support difficult:
 
 1. Windows doesn't use escape codes but uses console drawing API calls
 2. Go's `io.Stdout` is a `*io.File` type, so you can't simply set it to an
-   `io.Writer`. See [golang/go#13473](https://github.com/golang/go/issues/13473).
+   `io.Writer`. See [golang/go#13473][stdout]
 
 Because of these limitations, creating cross-platform console colors requires
 writing wrappers around `fmt.Fprintf` to write to an `io.Writer` provided by
@@ -95,8 +95,8 @@ the [colorable][colorable] package.
 
 ## Acknowledgments
 
-- [@mattn][mattn] for the [colorable][go-colorable] package.
-- [@fatih][faith] for the [color] package,
+- [@mattn][mattn] for the [colorable][colorable] package.
+- [@fatih][fatih] for the [color] package,
   which is a more widely used package and accomplishes many of the same goals as `lux`.
   The main difference is that `lux` is a `fmt.Formatter` implementation.
     - Bonus shoutout to [@fatih][fatih] for the awesome [vim-go][vim-go] package.
@@ -107,3 +107,4 @@ the [colorable][colorable] package.
 [vim-go]: https://github.com/fatih/vim-go
 [mattn]:  https://github.com/mattn
 [colorable]: https://github.com/mattn/go-colorable
+[stdout]: https://github.com/golang/go/issues/13473
