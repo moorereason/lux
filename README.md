@@ -1,4 +1,4 @@
-# lux [GoDoc](https://godoc.org/github.com/moorereason/lux?status.svg)](http://godoc.org/github.com/moorereason/lux) [![Report card](https://goreportcard.com/badge/github.com/moorereason/lux)](https://goreportcard.com/report/github.com/moorereason/lux)
+# lux [![GoDoc](https://godoc.org/github.com/moorereason/lux?status.svg)](http://godoc.org/github.com/moorereason/lux) [![Report card](https://goreportcard.com/badge/github.com/moorereason/lux)](https://goreportcard.com/report/github.com/moorereason/lux)
 
 Package `lux` provides the ability to color and enhance terminal output with ANSI escape codes.
 The package is implemented as a `fmt.Formatter` interface.
