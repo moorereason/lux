@@ -87,7 +87,7 @@ Two things make Windows support difficult:
 
 1. Windows doesn't use escape codes but uses console drawing API calls
 2. Go's `io.Stdout` is a `*io.File` type, so you can't simply set it to an
-   `io.Writer`.
+   `io.Writer`. See [golang/go#13473](https://github.com/golang/go/issues/13473).
 
 Because of these limitations, creating cross-platform console colors requires
 writing wrappers around `fmt.Fprintf` to write to an `io.Writer` provided by
