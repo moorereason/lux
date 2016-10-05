@@ -89,16 +89,14 @@ func (x *Lux) Format(f fmt.State, format rune) {
 var _ fmt.Formatter = (*Lux)(nil)
 
 func (x *Lux) write(f io.Writer) {
-	_, err := f.Write(x.format())
-	if err != nil {
+	var err error
+	if _, err = f.Write(x.format()); err != nil {
 		panic(err)
 	}
-	_, err = f.Write([]byte(x.val))
-	if err != nil {
+	if _, err = f.Write([]byte(x.val)); err != nil {
 		panic(err)
 	}
-	_, err = f.Write(x.unformat())
-	if err != nil {
+	if _, err = f.Write(x.unformat()); err != nil {
 		panic(err)
 	}
 }
