@@ -1,4 +1,4 @@
-# lux
+# lux [GoDoc](https://godoc.org/github.com/moorereason/lux?status.svg)](http://godoc.org/github.com/moorereason/lux) [![Report card](https://goreportcard.com/badge/github.com/moorereason/lux)](https://goreportcard.com/report/github.com/moorereason/lux)
 
 Package `lux` provides the ability to color and enhance terminal output with ANSI escape codes.
 The package is implemented as a `fmt.Formatter` interface.
@@ -79,4 +79,7 @@ the [colorable](https://github.com/mattn/go-colorable) package.
 ## Acknowledgments
 
 - [@mattn](https://github.com/mattn) for the [colorable](https://github.com/mattn/go-colorable) package.
-- [@fatih](https://github.com/fatih) for the [color](https://github.com/fatih/color) package, which much older and more widely used package.
+- [@fatih](https://github.com/fatih) for the [color](https://github.com/fatih/color) package,
+  which is a more widely used package and accomplishes many of the same goals as `lux`.
+  The main difference is that `lux` is a `fmt.Formatter` implementation.
+    - Bonus shoutout to @fatih for the awesome [https://github.com/fatih/vim-go](vim-go) package.
