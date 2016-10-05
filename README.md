@@ -8,7 +8,25 @@ Package `lux` provides a `fmt.Formatter` interface for outputting ANSI escape co
 go get github.com/moorereason/lux
 ```
 
-## Example Usage
+## Usage
+
+```go
+import (
+  "fmt"
+
+  "github.com/moorereason/lux"
+)
+
+func main() {
+	// No Windows support
+	fmt.Printf("%s\n", lux.Red("Red!"))
+
+	// Windows supported - see explanation in README
+	lux.Printf("%s\n", lux.Red("Red!"))
+}
+```
+
+## Snarky, Kitchen Sink Example
 
 ```go
 package main
