@@ -3,6 +3,7 @@ package lux
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 
 	isatty "github.com/mattn/go-isatty"
@@ -11,7 +12,7 @@ import (
 var (
 	// NoColor defines whether to use escape sequences or not.  By default,
 	// escape sequences are enabled when running on a TTY.
-	NoColor bool = !isatty.IsTerminal(os.Stdout.Fd())
+	NoColor = !isatty.IsTerminal(os.Stdout.Fd())
 
 	escape = []byte{0x1b} // "\x1b"
 )
@@ -22,8 +23,8 @@ type Lux struct {
 	styles []int
 }
 
-// New creates a new Lux instances with a series of LuxFn styles.
-func New(fns ...LuxFn) *Lux {
+// New creates a new Lux instances with a series of CodeFn styles.
+func New(fns ...CodeFn) *Lux {
 	x := &Lux{}
 	for _, fn := range fns {
 		x = fn(x)
@@ -32,21 +33,8 @@ func New(fns ...LuxFn) *Lux {
 }
 
 // Add appends a style to the list of styles in a Lux.
-func (x *Lux) Add(f LuxFn) *Lux {
+func (x *Lux) Add(f CodeFn) *Lux {
 	return f(x)
-}
-
-// Print is a colorable frontend to fmt.Print.
-func (x *Lux) Print(a ...interface{}) (n int, err error) {
-	mod := make([]interface{}, len(a))
-	for i, v := range a {
-		mod[i] = &Lux{
-			val:    fmt.Sprintf("%v", v),
-			styles: x.styles,
-		}
-	}
-
-	return fmt.Fprintf(Output, "%s", mod...)
 }
 
 // Printf is a colorable frontend to fmt.Printf.
@@ -62,32 +50,34 @@ func (x *Lux) Printf(format string, a ...interface{}) (n int, err error) {
 	return fmt.Fprintf(Output, format, mod...)
 }
 
+// Print is a colorable frontend to fmt.Print.
+func (x *Lux) Print(a ...interface{}) (n int, err error) {
+	return x.Printf("%s", a...)
+}
+
 // Println is a colorable frontend to fmt.Println.
 func (x *Lux) Println(a ...interface{}) (n int, err error) {
-	mod := make([]interface{}, len(a))
-	for i, v := range a {
-		mod[i] = &Lux{
-			val:    fmt.Sprintf("%v", v),
-			styles: x.styles,
-		}
-	}
-
-	return fmt.Fprintf(Output, "%s\n", mod...)
+	return x.Printf("%s\n", a...)
 }
 
 // Format implements the fmt.Formatter interface.  Not to be used directly.
 // Instead, pass the Lux as a parameter to fmt format functions.
 func (x *Lux) Format(f fmt.State, format rune) {
 	if NoColor {
-		f.Write([]byte(x.val))
+		if _, err := f.Write([]byte(x.val)); err != nil {
+			panic(err)
+		}
 		return
 	}
 	if format == 'v' {
 		if f.Flag('+') {
-			f.Write([]byte(fmt.Sprintf("{val: %v, styles: %v}", x.val, x.styles)))
-
+			if _, err := f.Write([]byte(fmt.Sprintf("{val: %v, styles: %v}", x.val, x.styles))); err != nil {
+				panic(err)
+			}
 		} else {
-			f.Write([]byte(fmt.Sprintf("{%v %v}", x.val, x.styles)))
+			if _, err := f.Write([]byte(fmt.Sprintf("{%v %v}", x.val, x.styles))); err != nil {
+				panic(err)
+			}
 		}
 		return
 	}
@@ -98,27 +88,51 @@ func (x *Lux) Format(f fmt.State, format rune) {
 // make sure we implement fmt.Formatter interface
 var _ fmt.Formatter = (*Lux)(nil)
 
-func (x *Lux) write(f fmt.State) {
-	f.Write(x.format())
-	f.Write([]byte(x.val))
-	f.Write(x.unformat())
+func (x *Lux) write(f io.Writer) {
+	_, err := f.Write(x.format())
+	if err != nil {
+		panic(err)
+	}
+	_, err = f.Write([]byte(x.val))
+	if err != nil {
+		panic(err)
+	}
+	_, err = f.Write(x.unformat())
+	if err != nil {
+		panic(err)
+	}
 }
 
 // format writes the beginning format codes.
 func (x *Lux) format() []byte {
 	var f bytes.Buffer
 
-	f.Write(escape)
-	f.Write([]byte{0x5b}) // "["
+	_, err := f.Write(escape)
+	if err != nil {
+		panic(err)
+	}
+	_, err = f.Write([]byte{0x5b}) // "["
+	if err != nil {
+		panic(err)
+	}
 
 	for i := 0; i < len(x.styles); i++ {
-		f.Write(attrs[x.styles[i]])
+		_, err = f.Write(attrs[x.styles[i]])
+		if err != nil {
+			panic(err)
+		}
 		if i < len(x.styles)-1 {
-			f.Write([]byte{0x3b}) // ";"
+			_, err = f.Write([]byte{0x3b}) // ";"
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 
-	f.Write([]byte{0x6d}) // "m"
+	_, err = f.Write([]byte{0x6d}) // "m"
+	if err != nil {
+		panic(err)
+	}
 
 	return f.Bytes()
 }
@@ -126,7 +140,9 @@ func (x *Lux) format() []byte {
 // unformat writes the format reset codes.
 func (x *Lux) unformat() []byte {
 	var f bytes.Buffer
-	f.Write([]byte{0x1b, 0x5b, 0x30, 0x6d}) // "\033[0m"
+	if _, err := f.Write([]byte{0x1b, 0x5b, 0x30, 0x6d}); err != nil { // "\033[0m"
+		panic(err)
+	}
 	return f.Bytes()
 }
 

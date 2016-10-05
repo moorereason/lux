@@ -1,6 +1,6 @@
 package lux
 
-// Base ints
+// Basic styles
 const (
 	reset int = iota
 	bold
@@ -10,11 +10,11 @@ const (
 	blinkSlow
 	blinkRapid
 	reverseVideo
-	concealed
+	conceal
 	crossedOut
 )
 
-// Foreground text colors
+// Foreground colors
 const (
 	fgBlack int = iota + 30
 	fgRed
@@ -26,19 +26,7 @@ const (
 	fgWhite
 )
 
-// Foreground Hi-Intensity text colors
-const (
-	fgHiBlack int = iota + 90
-	fgHiRed
-	fgHiGreen
-	fgHiYellow
-	fgHiBlue
-	fgHiMagenta
-	fgHiCyan
-	fgHiWhite
-)
-
-// Background text colors
+// Background Colors
 const (
 	bgBlack int = iota + 40
 	bgRed
@@ -50,7 +38,19 @@ const (
 	bgWhite
 )
 
-// Background Hi-Intensity text colors
+// High-Intensity, Foreground Colors
+const (
+	fgHiBlack int = iota + 90
+	fgHiRed
+	fgHiGreen
+	fgHiYellow
+	fgHiBlue
+	fgHiMagenta
+	fgHiCyan
+	fgHiWhite
+)
+
+// High-Intensity, Background Colors
 const (
 	bgHiBlack int = iota + 100
 	bgHiRed
@@ -71,7 +71,7 @@ var attrs = [...][]byte{
 	blinkSlow:    []byte{0x35},
 	blinkRapid:   []byte{0x36},
 	reverseVideo: []byte{0x37},
-	concealed:    []byte{0x38},
+	conceal:      []byte{0x38},
 	crossedOut:   []byte{0x39},
 
 	fgBlack:   []byte{0x33, 0x30},

@@ -7,9 +7,7 @@ import (
 	"github.com/moorereason/lux"
 )
 
-func ExampleLux() {
-
-Start:
+func Example() {
 	// Don't care about Windows?
 	fmt.Printf("%s\n", lux.Red("Red!"))
 	fmt.Printf("%s\n", lux.Red(lux.BgWhite("Red on White")))
@@ -34,14 +32,33 @@ Start:
 	w := lux.HiWhite
 	b := lux.HiBlue
 	lux.Printf("%s%s%s! %s%s%s!\n", r("U"), w("S"), b("A"), r("U"), w("S"), b("A"))
+}
 
-	if lux.NoColor {
-		goto Exit
-	} else {
-		// Let's do it again without colors.
-		// I know. Crazy, right?
-		lux.NoColor = true
-		goto Start
-	}
-Exit:
+func ExamplePrint() {
+	lux.Print(lux.Blue("Skies"))
+}
+
+func ExamplePrintln() {
+	lux.Println(lux.Blue("Skies"))
+}
+
+func ExamplePrintf() {
+	lux.Printf("%d\n", lux.HiCyan(20))
+}
+
+func ExampleLux_Print() {
+	c := lux.New(lux.Red)
+	c.Print("ERROR")
+}
+
+func ExampleLux_Println() {
+	c := lux.New(lux.Yellow)
+	c.Println("WARNING")
+}
+
+var err error
+
+func ExampleLux_Printf() {
+	c := lux.New(lux.BgRed)
+	c.Printf("CRITICAL: %s\n", err)
 }

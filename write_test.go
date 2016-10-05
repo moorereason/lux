@@ -12,13 +12,13 @@ import (
 func TestPrints(t *testing.T) {
 	tests := []struct {
 		text   string
-		styles []LuxFn
+		styles []CodeFn
 		want   string
 	}{
-		{"AA", []LuxFn{Red, BgGreen}, "\x1b[31;42mAA\x1b[0m"},
-		{"BB", []LuxFn{Bold}, "\x1b[1mBB\x1b[0m"},
-		{"BB", []LuxFn{Bold, Red, BgGreen}, "\x1b[1;31;42mBB\x1b[0m"},
-		{"BB", []LuxFn{BgGreen, Red, Bold}, "\x1b[42;31;1mBB\x1b[0m"},
+		{"AA", []CodeFn{Red, BgGreen}, "\x1b[31;42mAA\x1b[0m"},
+		{"BB", []CodeFn{Bold}, "\x1b[1mBB\x1b[0m"},
+		{"BB", []CodeFn{Bold, Red, BgGreen}, "\x1b[1;31;42mBB\x1b[0m"},
+		{"BB", []CodeFn{BgGreen, Red, Bold}, "\x1b[42;31;1mBB\x1b[0m"},
 	}
 
 	for i, test := range tests {
@@ -48,26 +48,6 @@ func TestPrints(t *testing.T) {
 
 }
 
-/*
-	blue := Blue
-	s := blue("test")
-	fmt.Printf("%s\n", s)
-	fmt.Println(s)
-
-	test := Blue("Test")
-	test.Add(BgWhite)
-	fmt.Printf("%s\n", test)
-
-	c := New(Red, BgGreen)
-	c.Print("Print: Red on Green")
-	println()
-	c.Println("Println: Red on Green")
-	c.Printf("%s", "Printf: Red on Green\n")
-
-	Printf("%s\n", Red(BgGreen("Red on Green")))
-}
-*/
-
 func captureOutput(f func()) string {
 	old := Output
 	r, w, err := os.Pipe()
@@ -78,10 +58,14 @@ func captureOutput(f func()) string {
 
 	f()
 
-	w.Close()
+	if err = w.Close(); err != nil {
+		panic(err)
+	}
 	Output = old
 
 	var buf bytes.Buffer
-	io.Copy(&buf, r)
+	if _, err = io.Copy(&buf, r); err != nil {
+		panic(err)
+	}
 	return buf.String()
 }

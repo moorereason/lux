@@ -1,3 +1,5 @@
+// +build !windows
+
 package lux
 
 import (
@@ -10,7 +12,7 @@ func TestColor(t *testing.T) {
 
 	tests := []struct {
 		text   string
-		fn     LuxFn
+		fn     CodeFn
 		styles string
 	}{
 		{"bold", Bold, "1"},
@@ -20,7 +22,7 @@ func TestColor(t *testing.T) {
 		{"blinkSlow", BlinkSlow, "5"},
 		{"blinkRapid", BlinkRapid, "6"},
 		{"reverseVideo", ReverseVideo, "7"},
-		{"concealed", Concealed, "8"},
+		{"conceal", Conceal, "8"},
 		{"crossedOut", CrossedOut, "9"},
 
 		{"black", Black, "30"},
@@ -78,25 +80,25 @@ func TestMulti(t *testing.T) {
 
 	tests := []struct {
 		text   string
-		fns    []LuxFn
+		fns    []CodeFn
 		styles string
 	}{
-		{"BlackOnBgGreen", []LuxFn{BgGreen, Black}, "42;30"},
-		{"BgGreenUnderBlack", []LuxFn{Black, BgGreen}, "30;42"},
-		{"RedGreen", []LuxFn{Green, Red}, "32;31"},
+		{"BlackOnBgGreen", []CodeFn{BgGreen, Black}, "42;30"},
+		{"BgGreenUnderBlack", []CodeFn{Black, BgGreen}, "30;42"},
+		{"RedGreen", []CodeFn{Green, Red}, "32;31"},
 
-		{"Red", []LuxFn{Red}, "31"},
-		{"RedBold", []LuxFn{Red, Bold}, "31;1"},
-		{"HiRedBold", []LuxFn{HiRed, Bold}, "91;1"},
+		{"Red", []CodeFn{Red}, "31"},
+		{"RedBold", []CodeFn{Red, Bold}, "31;1"},
+		{"HiRedBold", []CodeFn{HiRed, Bold}, "91;1"},
 
-		{"GreenFaint", []LuxFn{Green, Faint}, "32;2"},
-		{"YellowItalic", []LuxFn{Yellow, Italic}, "33;3"},
-		{"BlueUnderline", []LuxFn{Blue, Underline}, "34;4"},
-		{"MagentaBlinkSlow", []LuxFn{Magenta, BlinkSlow}, "35;5"},
-		{"CyanBlinkRapid", []LuxFn{Cyan, BlinkRapid}, "36;6"},
-		{"WhiteReverseVideo", []LuxFn{White, ReverseVideo}, "37;7"},
-		{"WhiteConcealed", []LuxFn{White, Concealed}, "37;8"},
-		{"WhiteCrossedOut", []LuxFn{White, CrossedOut}, "37;9"},
+		{"GreenFaint", []CodeFn{Green, Faint}, "32;2"},
+		{"YellowItalic", []CodeFn{Yellow, Italic}, "33;3"},
+		{"BlueUnderline", []CodeFn{Blue, Underline}, "34;4"},
+		{"MagentaBlinkSlow", []CodeFn{Magenta, BlinkSlow}, "35;5"},
+		{"CyanBlinkRapid", []CodeFn{Cyan, BlinkRapid}, "36;6"},
+		{"WhiteReverseVideo", []CodeFn{White, ReverseVideo}, "37;7"},
+		{"WhiteConceal", []CodeFn{White, Conceal}, "37;8"},
+		{"WhiteCrossedOut", []CodeFn{White, CrossedOut}, "37;9"},
 	}
 
 	for _, test := range tests {
